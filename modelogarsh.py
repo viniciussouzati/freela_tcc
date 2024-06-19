@@ -3,12 +3,7 @@ import scipy.optimize as spop
 import matplotlib.pyplot as plt
 import yfinance as yf
 
-#               .__                   __            .___                                   ___.                     .___      
-#___  _______  |__|   ____   _______/  |_ __ __  __| _/____ _______  ___  _______     ____\_ |__  __ __  ____    __| _/____  
-#\  \/ /\__  \ |  | _/ __ \ /  ___/\   __\  |  \/ __ |\__  \\_  __ \ \  \/ /\__  \   / ___\| __ \|  |  \/    \  / __ |/  _ \ 
-# \   /  / __ \|  | \  ___/ \___ \  |  | |  |  / /_/ | / __ \|  | \/  \   /  / __ \_/ /_/  > \_\ \  |  /   |  \/ /_/ (  <_> )
-#  \_/  (____  /__|  \___  >____  > |__| |____/\____ |(____  /__|      \_/  (____  /\___  /|___  /____/|___|  /\____ |\____/ 
-#            \/          \/     \/                  \/     \/                    \//_____/     \/           \/      \/     
+
 
 tickers = ['MTRE3.SA', 'LWSA3.SA', 'MDNE3.SA', 'PRNR3.SA', 'ALPK3.SA', 'AMBP3.SA', 'SOMA3.SA', 'DMVF3.SA',
          'LJQQ3.SA', 'LAVV3.SA', 'PGMN3.SA', 'PETZ3.SA', 'PLPL3.SA', 'CURY3.SA', 'HBSA3.SA', 'MELK3.SA',
@@ -56,21 +51,20 @@ def garch_mle(returns, params):
 # Lista de parâmetros iniciais para a otimização (média, omega, alpha, beta)
 initial_params = [0, 0.01, 0.1, 0.8]
 
-# Lista para armazenar os parâmetros ótimos de cada ação
 optimal_params = []
 
-# Loop para estimar os parâmetros do modelo GARCH para cada ação
+
 for historico in historicos:
-    # Calculando os retornos
+  
     returns = historico['Close'].pct_change().dropna().values
     
-    # Maximizando a log-verossimilhança para obter os parâmetros ótimos
+   
     res = spop.minimize(garch_mle, initial_params, args=(returns,), method='Nelder-Mead')
     
-    # Recuperando os parâmetros ótimos e armazenando na lista
+    
     optimal_params.append(res.x)
 
-# Visualizando os parâmetros ótimos estimados para cada ação
+
 for i, ticker in enumerate(tickers):
     print(f"Parâmetros ótimos para {ticker}: {optimal_params[i]}")
 
@@ -79,7 +73,7 @@ for historico, ticker in zip(historicos, tickers):
     plt.plot(historico.index, historico['Close'], label=ticker)
 
 
-# Visualizando os resultados (volatilidade realizada e condicional) para uma ação específica (por exemplo, a primeira da lista)
+
 params = optimal_params[0]
 mu = params[0]
 omega = params[1]
